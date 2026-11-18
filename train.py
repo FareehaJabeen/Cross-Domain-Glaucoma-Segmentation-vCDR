@@ -30,11 +30,11 @@ def set_seed(seed):
     random.seed(seed); np.random.seed(seed); tf.random.set_seed(seed)
 
 
-def callbacks(out):
+def callbacks(out, lr_patience=5, stop_patience=10):
     return [
-        tf.keras.callbacks.EarlyStopping(monitor="val_dice_coefficient", mode="max", patience=10,
+        tf.keras.callbacks.EarlyStopping(monitor="val_dice_coefficient", mode="max", patience=stop_patience,
                                          restore_best_weights=True, verbose=1),
-        tf.keras.callbacks.ReduceLROnPlateau(monitor="val_loss", factor=0.1, patience=5,
+        tf.keras.callbacks.ReduceLROnPlateau(monitor="val_loss", factor=0.1, patience=lr_patience,
                                              min_lr=1e-10, verbose=1),
         tf.keras.callbacks.CSVLogger(os.path.splitext(out)[0] + "_history.csv"),
     ]
