@@ -2,8 +2,9 @@
 Limited fine-tuning on a target dataset (REFUGE or DRISHTI-GS1).
 
 Starts from the ORIGA-trained model. ALL layers are updated (nothing frozen).
-"Limited" means few epochs: up to 30, lr 1e-5, batch 4, same callbacks and
-loss as train.py. Only the target development (train) split is used;
+"Limited" means few epochs: up to 30, lr 1e-5, batch 4, same loss as train.py.
+LR is reduced after 3 epochs and training stops after 7 epochs without improvement.
+Only the target development (train) split is used;
 the official test split is never seen.
 
 Example:
@@ -34,7 +35,7 @@ def main(a):
                   loss=make_loss(1.0, 0.5),
                   metrics=[dice_coefficient, iou_metric])
     model.fit(Xtr, Ytr, validation_data=(Xva, Yva), epochs=a.epochs, batch_size=a.batch,
-              callbacks=callbacks(a.out), verbose=1)
+              callbacks=callbacks(a.out, lr_patience=3, stop_patience=7), verbose=1)
     model.save(a.out)
     print(f"saved {a.out}")
 
